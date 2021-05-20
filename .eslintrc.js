@@ -13,15 +13,15 @@ module.exports = {
         sourceType: "module",
         ecmaFeatures: {
             modules: true
-        },
-        tsconfigRootDir: __dirname,
-        project: ["./tsconfig.json"]
+        }
+        // tsconfigRootDir: __dirname,
+        // project: ["./tsconfig.json"]
     },
     plugins: ["@typescript-eslint"],
     extends: [
         "eslint:recommended",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+        "plugin:@typescript-eslint/recommended"
+        // "plugin:@typescript-eslint/recommended-requiring-type-checking"
     ],
     rules: {
         "@typescript-eslint/ban-ts-comment": "off"

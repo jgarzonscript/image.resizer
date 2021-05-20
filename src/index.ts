@@ -2,6 +2,7 @@ import express from "express";
 import apiEndpoint from "./api";
 import path from "path";
 import ejs from "ejs";
+import middlewear from "./utilities/middlewear";
 
 const app = express();
 const port = 3000;
@@ -21,3 +22,5 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
     console.log(`server started listening at http://localhost:${port}`);
 });
+
+export default app;

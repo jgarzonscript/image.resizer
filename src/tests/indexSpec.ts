@@ -5,8 +5,9 @@ const request = supertest(app);
 
 describe("Main index page", () => {
     it("test root path/enpoint get request", async (done) => {
-        const resp = await request.get("/");
-        expect(resp).toBeTruthy();
-        done();
+        request
+            .get("/")
+            .expect("content-type", /text\/html/)
+            .expect(200, done);
     });
 });

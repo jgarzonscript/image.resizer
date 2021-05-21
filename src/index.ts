@@ -20,8 +20,6 @@ app.get("/", (req, res) => {
         mymessage: "jon was here"
     });
 
-    // res.sendFile(path.join("/images", "encenadaport.jpeg"));
-
     // const loc = path.resolve("./images", "encenadaport.jpeg");
     // res.sendFile(loc);
     // res.send(loc);

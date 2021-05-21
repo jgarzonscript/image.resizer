@@ -8,15 +8,23 @@ const app = express();
 const port = 3000;
 
 app.engine(".html", ejs.renderFile);
-app.set("views", __dirname);
+app.set("views", path.resolve("./public"));
 
 app.use("/api", apiEndpoint);
+// app.use("/static", express.static("public", { index: false }));
+app.use("/images", express.static("images"));
 
 //GET
 app.get("/", (req, res) => {
     res.render("index.html", {
-        mymessage: "hello world"
+        mymessage: "jon was here"
     });
+
+    // res.sendFile(path.join("/images", "encenadaport.jpeg"));
+
+    // const loc = path.resolve("./images", "encenadaport.jpeg");
+    // res.sendFile(loc);
+    // res.send(loc);
 });
 
 app.listen(port, () => {

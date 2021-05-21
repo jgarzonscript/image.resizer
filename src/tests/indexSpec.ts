@@ -1,12 +1,12 @@
-const myFunc = (num: number) => {
-    return num * num;
-};
-// it("expect myFunc(5) to equal 25", () => {
-//     expect(myFunc(5)).toEqual(25);
-// });
+import supertest from "supertest";
+import app from "../index";
 
-describe("someting", () => {
-    it("expect myFunc(5) to equal 25", () => {
-        expect(myFunc(5)).toEqual(25);
+const request = supertest(app);
+
+describe("Main index page", () => {
+    it("test root path/enpoint get request", async (done) => {
+        const resp = await request.get("/");
+        expect(resp).toBeTruthy();
+        done();
     });
 });

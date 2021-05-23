@@ -15,7 +15,7 @@ app.use("/api", apiEndpoint);
 app.use("/images", express.static("images"));
 
 //GET
-app.get("/", (req, res) => {
+app.get("/", middlewear.getListOfFiles, (req, res) => {
     res.render("index.html", {
         mymessage: "jon was here"
     });

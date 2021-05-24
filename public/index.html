@@ -5,11 +5,45 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Document</title>
+        <link rel="stylesheet" href="/static/style.css" />
     </head>
     <body>
-        <%= mymessage %>
+        <div class="error">
+            <% if (errormessage) { %>
+            <h2>error : <%= errormessage %></h2>
+            <% } %>
+        </div>
+        <header>
+            <h1>Image resizer utility</h1>
+            <h3>
+                Select an image below to resize. <br />enter sizes in boxes and
+                click resize button
+            </h3>
+        </header>
+        <main>
+            <% if (files.length) { %>
+
+            <div class="files">
+                <% files.forEach(element => { %>
+                <input
+                    type="radio"
+                    id="<%= element %>"
+                    name="image"
+                    value="<%= element %>"
+                />
+                <label data-parent="image" for="<%= element %>"
+                    ><%= element %></label
+                ><br />
+                <% }) %>
+            </div>
+
+            <% } %>
+        </main>
         <div>
             <!-- <img src="/images/encenadaport.jpg" alt="" /> -->
         </div>
+
+        <!-- <script src="/static/index.js"></script> -->
+        <script></script>
     </body>
 </html>

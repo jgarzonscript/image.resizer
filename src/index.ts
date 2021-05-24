@@ -11,18 +11,15 @@ app.engine(".html", ejs.renderFile);
 app.set("views", path.resolve("./public"));
 
 app.use("/api", apiEndpoint);
-// app.use("/static", express.static("public", { index: false }));
+app.use("/static", express.static("public", { index: false }));
 app.use("/images", express.static("images"));
 
 //GET
 app.get("/", middlewear.getListOfFiles, (req, res) => {
     res.render("index.html", {
-        mymessage: "jon was here"
+        errormessage: res.locals.error,
+        files: res.locals.files
     });
-
-    // const loc = path.resolve("./images", "encenadaport.jpeg");
-    // res.sendFile(loc);
-    // res.send(loc);
 });
 
 app.listen(port, () => {

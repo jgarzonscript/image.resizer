@@ -1,0 +1,30 @@
+.error {
+    color: red;
+}
+
+h3 {
+    font-weight: normal;
+}
+
+/* ul.items {
+    list-style-type: none;
+    padding: 0;
+    font-size: 20px;
+}
+
+.items > li {
+    padding: 5px 10px;
+}
+.items > li:hover {
+    background-color: #eeeeee;
+    cursor: default;
+}
+
+.files {
+    width: 25%;
+} */
+
+label[data-parent="image"]:hover {
+    background-color: #eeeeee;
+    /* cursor: default; */
+}

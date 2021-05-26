@@ -3,6 +3,12 @@ import { BaseEncodingOptions, Dirent, PathLike } from "fs";
 import { readdir } from "fs/promises";
 // import path from "path";
 
+/**
+ * @description Middlewear private function
+ * used by getListOfFiles()
+ * generates the list of files available in directory /images
+ * @returns {string[]}
+ */
 const getAllFiles = async (
     dir = "./images",
     options: BaseEncodingOptions & { withFileTypes: true }
@@ -17,6 +23,15 @@ const getAllFiles = async (
     }
 };
 
+/**
+ * @description middlewear public function;
+ * consumed by app.get("/")
+ * fills response object with client-facing data
+ * @param {req} request object
+ * @param {res} response object
+ * @param {next} next object
+ * @returns {void}
+ */
 const getListOfFiles = async (
     req: express.Request,
     res: express.Response,

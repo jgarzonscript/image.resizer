@@ -15,6 +15,21 @@ describe("Testing resizer class", () => {
             testType: Tester.TestType.None
         };
 
+        describe("Test of publicObject", () => {
+            it("should allow accessing public object", async () => {
+                const object = await Tester.resizerTester({
+                    testType: Tester.TestType.None
+                });
+
+                expect(object?.ready).toBeFalse();
+                expect(object?.test).toEqual("abc");
+
+                object?.testerFunc();
+                expect(object?.test).toMatch(/hello/);
+                expect(object?.ready).toBeTrue();
+            });
+        });
+
         describe("Testing init of parameters: width and height", () => {
             afterEach(() => {
                 options.height = "0";
@@ -30,6 +45,36 @@ describe("Testing resizer class", () => {
                 const object = await Tester.resizerTester(options);
                 expect(object).toBeDefined();
                 expect(object?.ready).toBeTrue();
+            });
+
+            it("should return a tuple of [200,300]", async () => {
+                options.width = "200";
+                options.height = "300";
+                options.testType = Tester.TestType.WidthAndHeight;
+
+                const object = await Tester.resizerTester(options);
+                expect(object).toBeDefined();
+                expect(object?.output).toEqual([200, 300]);
+            });
+
+            it("should return a tuple of [500, 200]", async () => {
+                options.width = "540";
+                options.height = "180";
+                options.testType = Tester.TestType.WidthAndHeight;
+
+                const object = await Tester.resizerTester(options);
+                expect(object).toBeDefined();
+                expect(object?.output).toEqual([500, 200]);
+            });
+
+            it("should return a tuple of [100, 100]", async () => {
+                options.width = "25";
+                options.height = "10";
+                options.testType = Tester.TestType.WidthAndHeight;
+
+                const object = await Tester.resizerTester(options);
+                expect(object).toBeDefined();
+                expect(object?.output).toEqual([100, 100]);
             });
 
             it("should fail when parameter width is empty", async () => {

@@ -3,6 +3,8 @@ import path from "path";
 import { access } from "fs/promises";
 import { constants } from "fs";
 
+import FsChecker from "./fsChecker";
+
 class ImageException extends Error {
     message: any;
     name: string;
@@ -18,6 +20,10 @@ class ImageException extends Error {
         return this.name + ", " + this.message;
     }
 }
+
+type Fn = () => void;
+
+// const Dimensions: [number, number] = [0, 0];
 
 /**
  * @description resizes an image
@@ -42,7 +48,7 @@ const resizeImage = async (
  * @param imageFile image file name
  * @returns undefined if successful;
  */
-const init_ImageFile = async (imageFile: string) => {
+const validateImage = async (imageFile: string) => {
     try {
         const pathToFile = path.resolve("./images", imageFile);
         await access(pathToFile, constants.R_OK);
@@ -50,7 +56,7 @@ const init_ImageFile = async (imageFile: string) => {
     } catch (error) {
         throw new ImageException(
             `error accessing file ${imageFile};;\npossible it does not exist in stored location;;\n ${error.message}`,
-            "init_ImageFile exception"
+            "validateImage exception"
         );
     }
 };
@@ -61,42 +67,49 @@ const init_ImageFile = async (imageFile: string) => {
  * @param height
  * @returns undefined
  */
-const init = (width: string, height: string) => {
+const parseDimensions = (width: string, height: string) => {
+    let _width = 0,
+        _height = 0;
+
     try {
         const parsedWidth = parseInt(width);
         if (!isNaN(parsedWidth) && parsedWidth > 0) {
-            _width = parsedWidth;
+            const roundedWidth = Math.round(parsedWidth / 100) * 100;
+            _width = roundedWidth < 100 ? 100 : roundedWidth;
         } else {
             throw new ImageException("width is not correctly provided");
         }
 
         const parsedHeight = parseInt(height);
         if (!isNaN(parsedHeight) && parsedHeight > 0) {
-            _height = parsedHeight;
+            const roundedHeight = Math.round(parsedHeight / 100) * 100;
+            _height = roundedHeight < 100 ? 100 : roundedHeight;
         } else {
             throw new ImageException("height is not correctly provided");
         }
 
-        return undefined;
+        const dimensions: [number, number] = [_width, _height];
+        return dimensions;
     } catch (error) {
         (error as ImageException).name = "init exception";
         throw error;
     }
 };
 
-const test = () => {
-    publicObject.test = "yo yo yo";
+const publicObject: {
+    ready: boolean;
+    test: string;
+    testerFunc: Fn;
+    output: number[];
+} = {
+    ready: false,
+    test: "abc",
+    testerFunc: () => {
+        publicObject.test = "hello world";
+        publicObject.ready = true;
+    },
+    output: []
 };
-
-let _width = 0;
-let _height = 0;
-
-const publicObject: { ready: boolean; test: string; publicFunction: Function } =
-    {
-        ready: false,
-        test: "abc",
-        publicFunction: test
-    };
 
 export default async function resizer(
     imageFile: string,
@@ -104,8 +117,31 @@ export default async function resizer(
     height: string
 ) {
     try {
-        init(width, height);
-        await init_ImageFile(imageFile);
+        let dimensions: [number, number] = [0, 0],
+            pathToImageFile = "",
+            newFileName = "";
+
+        dimensions = parseDimensions(width, height);
+        await validateImage(imageFile);
+
+        const checker = new FsChecker(imageFile, dimensions);
+        if (checker.thumbExists()) {
+            pathToImageFile = checker.thumb;
+            // TODO: send response
+
+            publicObject.ready = true;
+            return publicObject;
+        }
+
+        newFileName = checker.newFileName;
+
+        // fsChecker.resize(newFileName)
+
+        // 1. generate new filename from imageFile, width, and height; use path.join and see website
+        // 2. create thumb folder inside '/images' , we'll assume it is always there
+        // 3. check if new filename exists in thumb folder
+        // 4. if exists, send that file
+        // 5. if NOT exists, continue to next step (IE: use sharp)
 
         // TODO: create thumb folder if it does not exist then
         // -> check if imagefile already exists in thumb folder
@@ -139,14 +175,22 @@ export namespace Tester {
 
     export async function resizerTester(options: resizerTesterOptions) {
         try {
+            if (options.testType === TestType.None) {
+                return publicObject;
+            }
+
             if (options.testType === TestType.WidthAndHeight) {
-                init(String(options.width), String(options.height));
+                const dims = parseDimensions(
+                    String(options.width),
+                    String(options.height)
+                );
+                publicObject.output = dims;
                 publicObject.ready = true;
                 return publicObject;
             }
 
             if (options.testType === TestType.ImageFileExist) {
-                await init_ImageFile(String(options.imageFile));
+                await validateImage(String(options.imageFile));
                 publicObject.ready = true;
                 return publicObject;
             }

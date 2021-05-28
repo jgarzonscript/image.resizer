@@ -23,6 +23,11 @@ class ImageException extends Error {
 
 type Fn = () => void;
 
+export interface response {
+    ready: boolean;
+    thumb: string;
+}
+
 // const Dimensions: [number, number] = [0, 0];
 
 /**
@@ -96,19 +101,9 @@ const parseDimensions = (width: string, height: string) => {
     }
 };
 
-const publicObject: {
-    ready: boolean;
-    test: string;
-    testerFunc: Fn;
-    output: number[];
-} = {
+const resObject: response = {
     ready: false,
-    test: "abc",
-    testerFunc: () => {
-        publicObject.test = "hello world";
-        publicObject.ready = true;
-    },
-    output: []
+    thumb: ""
 };
 
 export default async function resizer(
@@ -126,11 +121,9 @@ export default async function resizer(
 
         const checker = new FsChecker(imageFile, dimensions);
         if (checker.thumbExists()) {
-            pathToImageFile = checker.thumb;
-            // TODO: send response
-
-            publicObject.ready = true;
-            return publicObject;
+            resObject.thumb = checker.thumb;
+            resObject.ready = true;
+            return resObject;
         }
 
         newFileName = checker.newFileName;
@@ -152,8 +145,8 @@ export default async function resizer(
 
         // TODO : go all the way, convert, send
 
-        publicObject.ready = true;
-        return publicObject;
+        resObject.ready = true;
+        return resObject;
     } catch (error) {
         throw error;
     }
@@ -173,10 +166,22 @@ export namespace Tester {
         imageFile?: string;
     }
 
-    export async function resizerTester(options: resizerTesterOptions) {
+    export interface TesterResponse extends response {
+        dims: [number, number];
+    }
+
+    const testerRespObject: TesterResponse = {
+        ready: false,
+        thumb: "",
+        dims: [0, 0]
+    };
+
+    export async function resizerTester(
+        options: resizerTesterOptions
+    ): Promise<TesterResponse | undefined> {
         try {
             if (options.testType === TestType.None) {
-                return publicObject;
+                return testerRespObject;
             }
 
             if (options.testType === TestType.WidthAndHeight) {
@@ -184,15 +189,16 @@ export namespace Tester {
                     String(options.width),
                     String(options.height)
                 );
-                publicObject.output = dims;
-                publicObject.ready = true;
-                return publicObject;
+
+                testerRespObject.dims = dims;
+                testerRespObject.ready = true;
+                return testerRespObject;
             }
 
             if (options.testType === TestType.ImageFileExist) {
                 await validateImage(String(options.imageFile));
-                publicObject.ready = true;
-                return publicObject;
+                testerRespObject.ready = true;
+                return testerRespObject;
             }
         } catch (error) {
             throw error;

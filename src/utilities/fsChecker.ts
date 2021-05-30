@@ -19,8 +19,8 @@ export interface thumbResponse {
 class FsChecker {
     private _imageFile: string;
     private _dimensions: typeof dims;
-    private _thumb: string = "";
-    private _newFileName: string = "";
+    private _thumb = "";
+    private _newFileName = "";
 
     constructor(imageFile: string, dimensions: typeof dims) {
         this._imageFile = imageFile;

@@ -1,4 +1,17 @@
-import { Tester } from "../../utilities/imageUtil";
+import reszr, { Tester } from "../../utilities/imageUtil";
+import path from "path";
+
+import { ImageUtilCustomMatchers } from "./matchers";
+
+declare global {
+    namespace jasmine {
+        interface Matchers<T> {
+            toExistInFS(expected: any, expectationFailOutput?: any): boolean;
+            // toBeFirstNameEqualTo(expected: any, expectationFailOutput?: any): boolean;
+            // toBeLastNameEqualTo(expected: any, expectationFailOutput?: any): boolean;
+        }
+    }
+}
 
 const IMG_FILE_1 = "encenadaport.jpg";
 const IMG_FILE_2 = "fjord.jpg";
@@ -8,7 +21,7 @@ const IMG_FILE_5 = "santamonica.jpg";
 const IMG_FILE_DOES_NOT_EXIST = "foobar.jpg";
 
 describe("Testing resizer class", () => {
-    describe("Testing initialization phase", () => {
+    describe("Testing individual phases", () => {
         const options: Tester.resizerTesterOptions = {
             height: "",
             width: "",
@@ -144,6 +157,44 @@ describe("Testing resizer class", () => {
                     ).toBeRejectedWithError(/ENOENT: no such file/);
                 });
             });
+        });
+    });
+
+    describe("Testing full class resizer", () => {
+        const config = {
+            imageFile: "",
+            width: "",
+            height: ""
+        };
+
+        beforeEach(() => {
+            jasmine.addMatchers(ImageUtilCustomMatchers);
+        });
+
+        afterEach(() => {
+            config.imageFile = "";
+            config.width = "";
+            config.height = "";
+        });
+
+        it(`should resize file [ ${IMG_FILE_1} ] `, async () => {
+            config.imageFile = IMG_FILE_1;
+            config.width = "600";
+            config.height = "800";
+
+            const fileExtension = path.extname(config.imageFile),
+                rootName = path.basename(config.imageFile, fileExtension);
+
+            const response = await reszr(
+                config.imageFile,
+                config.width,
+                config.height
+            );
+
+            expect(response.ready).toBeTrue();
+            expect(response.thumb).toBeDefined();
+            expect(response.thumb).toMatch(rootName);
+            expect(response.thumb).toExistInFS(null);
         });
     });
 });

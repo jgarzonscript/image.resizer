@@ -21,8 +21,6 @@ class ImageException extends Error {
     }
 }
 
-type Fn = () => void;
-
 export interface response {
     ready: boolean;
     thumb: string;
@@ -31,21 +29,31 @@ export interface response {
 // const Dimensions: [number, number] = [0, 0];
 
 /**
- * @description resizes an image
- * @returns // TODO
+ * @description resizes an image using the sharp utility
+ * @returns string file name of converted image
  */
 const resizeImage = async (
-    imagefile: string,
-    height: number,
-    width: number
+    imageFile: string,
+    newFileName: string,
+    dims: [number, number]
 ) => {
-    // validate file
-    // check if it exists in 'thumb' folder
-    // if yes -> skip sharp and serve this file
-    // if no -> continue with sharp process
-    //
-    //
-    // const result = sharp(imagefile).resize(width, height).toFile();
+    try {
+        const pathToImage = path.resolve("./images", imageFile),
+            pathToConverted = path.resolve("./images/thumbs", newFileName);
+
+        const infoObject = await sharp(pathToImage)
+            .resize(dims[0], dims[1], {
+                kernel: sharp.kernel.nearest,
+                fit: "contain"
+            })
+            .toFile(pathToConverted);
+        return pathToConverted;
+    } catch (error) {
+        throw new ImageException(
+            `error trying to resize image [ ${imageFile} ] using sharp module\n${error.message}`,
+            "resizeImage Exception"
+        );
+    }
 };
 
 /**
@@ -111,47 +119,31 @@ export default async function resizer(
     width: string,
     height: string
 ) {
-    try {
-        let dimensions: [number, number] = [0, 0],
-            pathToImageFile = "",
-            newFileName = "";
+    let dimensions: [number, number] = [0, 0],
+        newFileName = "",
+        thumb = "";
 
-        dimensions = parseDimensions(width, height);
-        await validateImage(imageFile);
+    dimensions = parseDimensions(width, height);
 
-        const checker = new FsChecker(imageFile, dimensions);
-        if (checker.thumbExists()) {
-            resObject.thumb = checker.thumb;
-            resObject.ready = true;
-            return resObject;
-        }
+    await validateImage(imageFile);
 
-        newFileName = checker.newFileName;
-
-        // fsChecker.resize(newFileName)
-
-        // 1. generate new filename from imageFile, width, and height; use path.join and see website
-        // 2. create thumb folder inside '/images' , we'll assume it is always there
-        // 3. check if new filename exists in thumb folder
-        // 4. if exists, send that file
-        // 5. if NOT exists, continue to next step (IE: use sharp)
-
-        // TODO: create thumb folder if it does not exist then
-        // -> check if imagefile already exists in thumb folder
-        // -> if exists -> serve that and send file
-        // -> if NOT exists -> continue to next step
-
-        // TODO: consume the sharp class and do the conversion
-
-        // TODO : go all the way, convert, send
-
+    const checker = new FsChecker(imageFile, dimensions);
+    if (await checker.thumbExists()) {
+        resObject.thumb = checker.thumb;
         resObject.ready = true;
         return resObject;
-    } catch (error) {
-        throw error;
     }
+
+    newFileName = checker.newFileName;
+
+    thumb = await resizeImage(imageFile, newFileName, dimensions);
+
+    resObject.thumb = thumb;
+    resObject.ready = true;
+    return resObject;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Tester {
     export enum TestType {
         None = 0,
@@ -179,29 +171,25 @@ export namespace Tester {
     export async function resizerTester(
         options: resizerTesterOptions
     ): Promise<TesterResponse | undefined> {
-        try {
-            if (options.testType === TestType.None) {
-                return testerRespObject;
-            }
+        if (options.testType === TestType.None) {
+            return testerRespObject;
+        }
 
-            if (options.testType === TestType.WidthAndHeight) {
-                const dims = parseDimensions(
-                    String(options.width),
-                    String(options.height)
-                );
+        if (options.testType === TestType.WidthAndHeight) {
+            const dims = parseDimensions(
+                String(options.width),
+                String(options.height)
+            );
 
-                testerRespObject.dims = dims;
-                testerRespObject.ready = true;
-                return testerRespObject;
-            }
+            testerRespObject.dims = dims;
+            testerRespObject.ready = true;
+            return testerRespObject;
+        }
 
-            if (options.testType === TestType.ImageFileExist) {
-                await validateImage(String(options.imageFile));
-                testerRespObject.ready = true;
-                return testerRespObject;
-            }
-        } catch (error) {
-            throw error;
+        if (options.testType === TestType.ImageFileExist) {
+            await validateImage(String(options.imageFile));
+            testerRespObject.ready = true;
+            return testerRespObject;
         }
     }
 }

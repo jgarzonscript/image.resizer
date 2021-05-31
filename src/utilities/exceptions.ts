@@ -1,7 +1,7 @@
 //
 
 export class FsException extends Error {
-    message: any;
+    message: string;
     name: string;
 
     constructor(message: string, name?: string) {
@@ -11,7 +11,7 @@ export class FsException extends Error {
         this.stack = (<any>new Error()).stack;
     }
 
-    toString() {
+    toString(): string {
         return this.name + ", " + this.message;
     }
 }

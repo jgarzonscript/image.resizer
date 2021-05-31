@@ -4,6 +4,7 @@ import path from "path";
 import { ImageUtilCustomMatchers } from "./matchers";
 
 declare global {
+    // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace jasmine {
         interface Matchers<T> {
             toExistInFS(expected: any, expectationFailOutput?: any): boolean;

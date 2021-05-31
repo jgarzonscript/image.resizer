@@ -2,7 +2,7 @@ import path from "path";
 import { access } from "fs/promises";
 import { constants } from "fs";
 
-import { FsException } from "./exceptions";
+// import { FsException } from "./exceptions";
 
 const dims: [number, number] = [0, 0];
 
@@ -27,11 +27,11 @@ class FsChecker {
         this._dimensions = dimensions;
     }
 
-    get thumb() {
+    get thumb(): string {
         return this._thumb;
     }
 
-    get newFileName() {
+    get newFileName(): string {
         return this._newFileName;
     }
 

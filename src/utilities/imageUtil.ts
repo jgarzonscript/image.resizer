@@ -6,7 +6,7 @@ import { constants } from "fs";
 import FsChecker from "./fsChecker";
 
 class ImageException extends Error {
-    message: any;
+    message: string;
     name: string;
 
     constructor(message: string, name?: string) {
@@ -118,7 +118,7 @@ export default async function resizer(
     imageFile: string,
     width: string,
     height: string
-) {
+): Promise<response> {
     let dimensions: [number, number] = [0, 0],
         newFileName = "",
         thumb = "";

@@ -1,5 +1,5 @@
 import express from "express";
-import { BaseEncodingOptions, Dirent, PathLike } from "fs";
+import { BaseEncodingOptions } from "fs";
 import { readdir } from "fs/promises";
 // import path from "path";
 
@@ -36,7 +36,7 @@ const getListOfFiles = async (
     req: express.Request,
     res: express.Response,
     next: express.NextFunction
-) => {
+): Promise<void> => {
     try {
         res.locals.files = await getAllFiles("./images", {
             withFileTypes: true

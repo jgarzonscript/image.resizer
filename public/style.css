@@ -11,6 +11,14 @@ label[data-parent="image"]:hover {
     /* cursor: default; */
 }
 
+.dimensions {
+    padding: 10px;
+}
+
+.dims {
+    padding: 5px;
+}
+
 .buttons {
     padding: 10px;
 }

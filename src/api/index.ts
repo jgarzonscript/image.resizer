@@ -1,7 +1,4 @@
 import express from "express";
-import { access } from "fs/promises";
-import path from "path";
-import { constants, read } from "fs";
 import reszr from "../utilities/imageUtil";
 
 const apiRouter = express.Router();

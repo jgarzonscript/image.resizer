@@ -6,7 +6,7 @@ This project provides a simple front-end page to expedite functionality, which a
 The endpoint being consumed is: 'http://localhost:3000/api'
 the endpoint with parameters: http://localhost:3000/api?image=santamonica.jpg&width=200&height=300
 
-Once you installed all the needed modules,
+Once you have installed all the needed modules,
 launched the server,
 you can point your browser to the front end: http://localhost:3000/
 

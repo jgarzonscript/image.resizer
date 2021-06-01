@@ -36,7 +36,7 @@ const resizeImage = async (
     imageFile: string,
     newFileName: string,
     dims: [number, number]
-) => {
+): Promise<string> => {
     try {
         const pathToImage = path.resolve("./images", imageFile),
             pathToConverted = path.resolve("./images/thumbs", newFileName);

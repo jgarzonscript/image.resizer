@@ -1,7 +1,7 @@
 import express from "express";
 import { BaseEncodingOptions } from "fs";
 import { readdir } from "fs/promises";
-// import path from "path";
+import { FsException } from "./exceptions";
 
 /**
  * @description Middlewear private function
@@ -12,14 +12,17 @@ import { readdir } from "fs/promises";
 const getAllFiles = async (
     dir = "./images",
     options: BaseEncodingOptions & { withFileTypes: true }
-) => {
+): Promise<string[]> => {
     try {
         const files = (await readdir(dir, options))
             .filter((item) => !item.isDirectory())
             .map((file) => file.name);
         return files;
     } catch (error) {
-        throw new Error(error);
+        throw new FsException(
+            `error trying to read directory ${dir} \n ${error.message}`,
+            "getAllFiles Exception"
+        );
     }
 };
 
@@ -38,13 +41,15 @@ const getListOfFiles = async (
     next: express.NextFunction
 ): Promise<void> => {
     try {
-        res.locals.files = await getAllFiles("./images", {
+        let files: string[] = [];
+        files = await getAllFiles("./images", {
             withFileTypes: true
         });
+        res.locals.files = files;
         next();
-    } catch (error) {
+    } catch (error: unknown) {
         console.log(error);
-        res.locals.error = error;
+        res.locals.error = (error as FsException).message;
         next();
     }
 };

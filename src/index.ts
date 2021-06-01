@@ -16,10 +16,12 @@ app.use("/images", express.static("images"));
 
 //GET
 app.get("/", middlewear.getListOfFiles, (req, res) => {
-    res.render("index.html", {
-        errormessage: res.locals.error,
-        files: res.locals.files
-    });
+    const options: renderObject = {
+        errormessage: res.locals.error as string,
+        files: res.locals.files as string[]
+    };
+
+    res.render("index.html", options);
 });
 
 app.listen(port, () => {
@@ -27,3 +29,8 @@ app.listen(port, () => {
 });
 
 export default app;
+
+interface renderObject {
+    errormessage: string;
+    files: string[];
+}

@@ -6,7 +6,7 @@ const fetchApi = async (image, width = "", height = "") => {
             address: ""
         };
 
-    debugger;
+    // debugger;
     response = await fetch(
         `http://localhost:3000/api?image=${image}&width=${width}&height=${height}`
     );
@@ -14,11 +14,11 @@ const fetchApi = async (image, width = "", height = "") => {
     if (response.ok) {
         rtnObj.ready = true;
         rtnObj.address = response.url;
-        debugger;
+        // debugger;
     } else {
         const text = await response.text();
         rtnObj.error = text;
-        debugger;
+        // debugger;
     }
 
     return rtnObj;
@@ -64,18 +64,5 @@ document.getElementById("btngn").addEventListener("click", async (e) => {
         link.href = address;
 
         divLink.appendChild(link);
-
-        // const width = "",
-        //     height = "";
-        // const response = await fetch(
-        //     `http://localhost:3000/api?image=${getImage}&width=${width}&height=${height}`
-        // );
-
-        // if (response.ok) {
-        //     const val = await response.blob(); // TODO: change to recieve image file
-
-        //     const data = URL.createObjectURL(val);
-        //     return Promise.resolve(data);
-        // }
     }
 });

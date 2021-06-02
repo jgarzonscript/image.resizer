@@ -30,7 +30,7 @@ export interface response {
 
 /**
  * @description resizes an image using the sharp utility
- * @returns string file name of converted image
+ * @returns {string} file name of converted image
  */
 const resizeImage = async (
     imageFile: string,
@@ -59,9 +59,9 @@ const resizeImage = async (
 /**
  * @description validates the image file exists in folder ./images
  * @param imageFile image file name
- * @returns undefined if successful;
+ * @returns {undefined} undefined if successful;
  */
-const validateImage = async (imageFile: string) => {
+const validateImage = async (imageFile: string): Promise<undefined> => {
     try {
         const pathToFile = path.resolve("./images", imageFile);
         await access(pathToFile, constants.R_OK);
@@ -78,9 +78,9 @@ const validateImage = async (imageFile: string) => {
  * @description validates parameters: width, height
  * @param width
  * @param height
- * @returns undefined
+ * @returns {[number,number]} tuple [number, number]
  */
-const parseDimensions = (width: string, height: string) => {
+const parseDimensions = (width: string, height: string): [number, number] => {
     let _width = 0,
         _height = 0;
 
@@ -114,6 +114,13 @@ const resObject: response = {
     thumb: ""
 };
 
+/**
+ *
+ * @param imageFile image file name
+ * @param width width size
+ * @param height height size
+ * @returns resizer.response
+ */
 export default async function resizer(
     imageFile: string,
     width: string,

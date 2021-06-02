@@ -2,19 +2,16 @@ import path from "path";
 import { access } from "fs/promises";
 import { constants } from "fs";
 
-// import { FsException } from "./exceptions";
-
 const dims: [number, number] = [0, 0];
 
 export interface thumbResponse {
     message?: string;
     error?: string;
-    // thumb?: string;
 }
 
 /**
  * @param imageFile image file name
- * @param dimensions requested dimensions of width x height
+ * @param dimensions width x height as tuple [number, number]
  */
 class FsChecker {
     private _imageFile: string;
@@ -61,7 +58,7 @@ class FsChecker {
     // TODO : add error handling try/catch
     /**
      * @description generates the image file name used for conversion
-     * @returns string image file name
+     * @returns {string} image file name
      */
     private generateNewFileName(): string {
         const fileExtension = path.extname(this._imageFile),

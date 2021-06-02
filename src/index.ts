@@ -14,17 +14,20 @@ app.use("/api", apiEndpoint);
 app.use("/static", express.static("public", { index: false }));
 app.use("/images", express.static("images"));
 
-//GET
-app.get("/", middlewear.getListOfFiles, (req, res) => {
-    const options: renderObject = {
-        errormessage: res.locals.error as string,
-        files: res.locals.files as string[]
-    };
+app.get(
+    "/",
+    middlewear.getListOfFiles,
+    (req: express.Request, res: express.Response): void => {
+        const options: renderObject = {
+            errormessage: res.locals.error as string,
+            files: res.locals.files as string[]
+        };
 
-    res.render("index.html", options);
-});
+        res.render("index.html", options);
+    }
+);
 
-app.listen(port, () => {
+app.listen(port, (): void => {
     console.log(`server started listening at http://localhost:${port}`);
 });
 

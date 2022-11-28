@@ -2,7 +2,7 @@ import express from "express";
 import apiEndpoint from "./api";
 import path from "path";
 import ejs from "ejs";
-import middlewear from "./utilities/middlewear";
+import { getListOfFiles } from "./utilities/middlewear";
 import morgan from "morgan";
 
 // custom morgan token for date/time
@@ -21,23 +21,13 @@ app.use("/static", express.static("public", { index: false }));
 app.use("/images", express.static("images"));
 app.use(morgan('(:datetime) ":method :url" :status :response-time ms'));
 
-app.get("/", middlewear.getListOfFiles, (req: express.Request, res: express.Response): void => {
-    const options: renderObject = {
-        errormessage: res.locals.error as string,
-        files: res.locals.files as string[]
-    };
-
-    res.render("index.html", options);
+app.get("/", getListOfFiles, (req: express.Request, res: express.Response): void => {
+    res.render("index.html", {});
 });
 
 app.listen(port, (): void => {
     const now = new Date().toLocaleString("en-US");
-    console.log(`[${now}] server started listening at http://localhost:${port}`);
+    console.log(`(${now}) server started listening at http://localhost:${port}`);
 });
 
 export default app;
-
-interface renderObject {
-    errormessage: string;
-    files: string[];
-}

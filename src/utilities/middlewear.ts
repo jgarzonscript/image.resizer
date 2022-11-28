@@ -2,6 +2,7 @@ import express from "express";
 import { BaseEncodingOptions } from "fs";
 import { readdir } from "fs/promises";
 import { FsException } from "./exceptions";
+import { IMAGES_FOLDER } from "./secrets";
 
 /**
  * @description Middlewear private function
@@ -9,18 +10,17 @@ import { FsException } from "./exceptions";
  * generates the list of files available in directory /images
  * @returns {string[]}
  */
-const getAllFiles = async (
-    dir = "./images",
-    options: BaseEncodingOptions & { withFileTypes: true }
-): Promise<string[]> => {
+const getAllFiles = async (): Promise<string[]> => {
+    const opts: BaseEncodingOptions & { withFileTypes: true } = { withFileTypes: true };
+
     try {
-        const files = (await readdir(dir, options))
+        const files = (await readdir(IMAGES_FOLDER, opts))
             .filter((item) => !item.isDirectory())
             .map((file) => file.name);
         return files;
     } catch (error) {
         throw new FsException(
-            `error trying to read directory ${dir} \n ${(<Error>error).message}`,
+            `error trying to read directory '${IMAGES_FOLDER}' \n ${(<Error>error).message}`,
             "getAllFiles Exception"
         );
     }
@@ -28,23 +28,20 @@ const getAllFiles = async (
 
 /**
  * @description middlewear public function;
- * consumed by app.get("/")
+ * consumed by app.get("/"),
  * fills response object with client-facing data
- * @param {req} request object
- * @param {res} response object
- * @param {next} next object
+ * @param {req} request
+ * @param {res} response
+ * @param {next} next
  * @returns {void}
  */
-const getListOfFiles = async (
+export const getListOfFiles = async (
     req: express.Request,
     res: express.Response,
     next: express.NextFunction
 ): Promise<void> => {
     try {
-        let files: string[] = [];
-        files = await getAllFiles("./images", {
-            withFileTypes: true
-        });
+        const files = await getAllFiles();
         res.locals.files = files;
         next();
     } catch (error: unknown) {

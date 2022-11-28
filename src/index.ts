@@ -3,6 +3,12 @@ import apiEndpoint from "./api";
 import path from "path";
 import ejs from "ejs";
 import middlewear from "./utilities/middlewear";
+import morgan from "morgan";
+
+// custom morgan token for date/time
+morgan.token("datetime", function (_req, _res) {
+    return new Date().toLocaleString();
+});
 
 const app = express();
 const port = 3000;
@@ -13,22 +19,20 @@ app.set("views", path.resolve("./public"));
 app.use("/api", apiEndpoint);
 app.use("/static", express.static("public", { index: false }));
 app.use("/images", express.static("images"));
+app.use(morgan('(:datetime) ":method :url" :status :response-time ms'));
 
-app.get(
-    "/",
-    middlewear.getListOfFiles,
-    (req: express.Request, res: express.Response): void => {
-        const options: renderObject = {
-            errormessage: res.locals.error as string,
-            files: res.locals.files as string[]
-        };
+app.get("/", middlewear.getListOfFiles, (req: express.Request, res: express.Response): void => {
+    const options: renderObject = {
+        errormessage: res.locals.error as string,
+        files: res.locals.files as string[]
+    };
 
-        res.render("index.html", options);
-    }
-);
+    res.render("index.html", options);
+});
 
 app.listen(port, (): void => {
-    console.log(`server started listening at http://localhost:${port}`);
+    const now = new Date().toLocaleString("en-US");
+    console.log(`[${now}] server started listening at http://localhost:${port}`);
 });
 
 export default app;

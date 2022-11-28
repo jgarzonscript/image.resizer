@@ -20,7 +20,7 @@ const getAllFiles = async (
         return files;
     } catch (error) {
         throw new FsException(
-            `error trying to read directory ${dir} \n ${error.message}`,
+            `error trying to read directory ${dir} \n ${(<Error>error).message}`,
             "getAllFiles Exception"
         );
     }

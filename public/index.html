@@ -9,8 +9,8 @@
     </head>
     <body>
         <div class="error">
-            <% if (errormessage) { %>
-            <h2 id="error">error : <%= errormessage %></h2>
+            <% if (locals.error) { %>
+            <h2 id="error">error : <%= error %></h2>
             <% } %>
         </div>
         <header>
@@ -57,6 +57,7 @@
             <!-- <img src="/images/encenadaport.jpg" alt="" /> -->
         </div>
 
+        <aside><% console.log(locals) %></aside>
         <script src="/static/index.js"></script>
         <script></script>
     </body>

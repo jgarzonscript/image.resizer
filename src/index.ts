@@ -6,7 +6,7 @@ import { getListOfFiles } from "./utilities/middlewear";
 import morgan from "morgan";
 
 // custom morgan token for date/time
-morgan.token("datetime", function (_req, _res) {
+morgan.token("datetime", function () {
     return new Date().toLocaleString();
 });
 

@@ -3,3 +3,4 @@ build
 backup
 images/thumbs/*
 .env
+logs/*
